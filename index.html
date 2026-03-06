@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuuday × Elastic — Executive Briefing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@600;700;800&display=swap');
+
+  :root {
+    --bg: #f4f2ef;
+    --bg-card: #ffffff;
+    --bg-sidebar: #1a1a2e;
+    --sidebar-hover: #252545;
+    --sidebar-active: #2d2d52;
+    --text: #2c2c3a;
+    --text-muted: #6b6b80;
+    --text-sidebar: #c8c8d8;
+    --text-sidebar-active: #ffffff;
+    --accent: #00bfa5;
+    --accent2: #f75c5c;
+    --accent3: #ffb74d;
+    --accent4: #7c4dff;
+    --accent5: #29b6f6;
+    --elastic-teal: #00bfb3;
+    --elastic-dark: #07c;
+    --border: #e2e0db;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+    --shadow-lg: 0 4px 20px rgba(0,0,0,.08);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --font-body: 'DM Sans', sans-serif;
+    --font-display: 'Playfair Display', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --sidebar-w: 260px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 15px; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--bg-sidebar);
+    z-index: 100;
+    display: flex; flex-direction: column;
+    transition: transform .3s ease;
+    overflow-y: auto;
+  }
+  .sidebar-brand {
+    padding: 28px 24px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .sidebar-brand h1 {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    color: #fff;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+  }
+  .sidebar-brand h1 span { color: var(--elastic-teal); }
+  .sidebar-brand p {
+    font-size: .72rem;
+    color: var(--text-sidebar);
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 500;
+  }
+  .sidebar nav { flex: 1; padding: 16px 12px; }
+  .sidebar nav a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    color: var(--text-sidebar);
+    text-decoration: none;
+    font-size: .85rem;
+    font-weight: 500;
+    transition: all .15s ease;
+    margin-bottom: 2px;
+  }
+  .sidebar nav a:hover { background: var(--sidebar-hover); color: #fff; }
+  .sidebar nav a.active { background: var(--sidebar-active); color: var(--text-sidebar-active); }
+  .sidebar nav a .nav-icon { font-size: 1.05rem; width: 22px; text-align: center; flex-shrink: 0; }
+  .sidebar nav a .nav-num {
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    color: var(--elastic-teal);
+    opacity: .7;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .sidebar nav .nav-divider {
+    height: 1px; background: rgba(255,255,255,.06); margin: 10px 14px;
+  }
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,.06);
+    font-size: .7rem;
+    color: rgba(255,255,255,.3);
+    text-align: center;
+  }
+
+  /* ─── HAMBURGER ─── */
+  .hamburger {
+    display: none; position: fixed; top: 14px; left: 14px;
+    z-index: 200; width: 42px; height: 42px;
+    background: var(--bg-sidebar); border: none; border-radius: 8px;
+    cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  }
+  .hamburger span {
+    display: block; width: 20px; height: 2px; background: #fff; border-radius: 2px;
+    transition: all .2s ease;
+  }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(2.5px,2.5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(2.5px,-2.5px); }
+  .overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 90;
+  }
+
+  /* ─── MAIN ─── */
+  .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+  .main-inner { max-width: 1000px; margin: 0 auto; padding: 36px 40px 80px; }
+
+  /* ─── SECTIONS ─── */
+  section { margin-bottom: 56px; scroll-margin-top: 24px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 6px;
+  }
+  .section-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    color: var(--text);
+  }
+  .section-summary {
+    color: var(--text-muted);
+    font-size: .92rem;
+    margin-bottom: 24px;
+    max-width: 740px;
+    line-height: 1.7;
+  }
+  .priority-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent2), #ff8a65);
+    color: #fff; font-size: .65rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-left: 8px; vertical-align: middle;
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    transition: box-shadow .2s ease;
+  }
+  .card:hover { box-shadow: var(--shadow-lg); }
+  .card h3 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .card h4 {
+    font-size: .85rem; font-weight: 600; margin-bottom: 8px; color: var(--text);
+  }
+  .card p, .card li { font-size: .88rem; color: var(--text); line-height: 1.65; }
+  .card ul { padding-left: 18px; }
+  .card ul li { margin-bottom: 4px; }
+
+  /* ─── KPI TILES ─── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .kpi-tile {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 18px 16px;
+    text-align: center;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .kpi-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .kpi-value {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .kpi-label {
+    font-size: .72rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  /* ─── MEETING FOCUS BOX ─── */
+  .meeting-focus {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d52 100%);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .meeting-focus::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: var(--elastic-teal);
+    opacity: .12;
+    border-radius: 50%;
+  }
+  .meeting-focus h3 {
+    font-size: .75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--elastic-teal);
+    margin-bottom: 8px;
+  }
+  .meeting-focus p { font-size: .9rem; line-height: 1.6; color: rgba(255,255,255,.88); }
+
+  /* ─── TABLES ─── */
+  .table-wrap { overflow-x: auto; margin-bottom: 20px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .82rem;
+  }
+  table thead th {
+    background: #f8f7f4;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--border);
+    color: var(--text);
+    white-space: nowrap;
+  }
+  table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text);
+  }
+  table tbody tr:last-child td { border-bottom: none; }
+  table tbody tr:hover { background: rgba(0,191,179,.03); }
+  .priority-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    font-size: .7rem; font-weight: 700; color: #fff;
+    background: var(--elastic-teal); flex-shrink: 0;
+  }
+  .priority-num.high { background: var(--accent2); }
+
+  /* ─── ARCH DIAGRAM ─── */
+  .arch-diagram {
+    background: #fafaf8;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .arch-diagram h4 {
+    font-size: .78rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--text-muted); margin-bottom: 18px; text-align: center;
+  }
+  .arch-layers { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .arch-layer {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid;
+    width: 100%; max-width: 720px;
+    position: relative;
+  }
+  .arch-layer .layer-label {
+    position: absolute; top: -9px; left: 16px;
+    background: #fafaf8;
+    padding: 0 8px;
+    font-size: .65rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+  .arch-box {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: .75rem;
+    font-weight: 500;
+    text-align: center;
+    min-width: 120px;
+  }
+  .layer-channels { border-color: #90caf9; }
+  .layer-channels .layer-label { color: #1565c0; }
+  .layer-channels .arch-box { background: #e3f2fd; color: #1565c0; }
+
+  .layer-netcracker { border-color: #ce93d8; }
+  .layer-netcracker .layer-label { color: #7b1fa2; }
+  .layer-netcracker .arch-box { background: #f3e5f5; color: #7b1fa2; }
+
+  .layer-infra { border-color: #a5d6a7; }
+  .layer-infra .layer-label { color: #2e7d32; }
+  .layer-infra .arch-box { background: #e8f5e9; color: #2e7d32; }
+
+  .layer-legacy { border-color: #ffcc80; }
+  .layer-legacy .layer-label { color: #e65100; }
+  .layer-legacy .arch-box { background: #fff3e0; color: #e65100; }
+
+  .arch-arrow {
+    text-align: center; color: var(--text-muted); font-size: 1.1rem; line-height: 1;
+  }
+  .elastic-overlay {
+    position: relative;
+    background: linear-gradient(90deg, rgba(0,191,179,.08), rgba(0,191,179,.04));
+    border: 1.5px dashed var(--elastic-teal);
+    border-radius: var(--radius-sm);
+    padding: 10px 16px;
+    width: 100%; max-width: 720px;
+    text-align: center;
+    margin-top: 4px;
+  }
+  .elastic-overlay .layer-label { color: var(--elastic-teal); background: #fafaf8; }
+  .elastic-overlay span {
+    font-size: .72rem; color: var(--elastic-teal); font-weight: 600;
+  }
+
+  /* ─── PHASE PILLS ─── */
+  .phase-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+  .phase-pill {
+    flex: 1; min-width: 200px;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    border-left: 4px solid;
+    background: var(--bg-card);
+    box-shadow: var(--shadow);
+  }
+  .phase-pill strong { font-size: .82rem; display: block; margin-bottom: 2px; }
+  .phase-pill span { font-size: .78rem; color: var(--text-muted); }
+  .phase-pill:nth-child(1) { border-color: var(--accent2); }
+  .phase-pill:nth-child(2) { border-color: var(--accent3); }
+  .phase-pill:nth-child(3) { border-color: var(--accent4); }
+
+  /* ─── TWO-COL GRID ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  /* ─── TALK TRACK CARDS ─── */
+  .talk-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 0;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: box-shadow .2s ease;
+  }
+  .talk-card:hover { box-shadow: var(--shadow-lg); }
+  .talk-card-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+    flex-wrap: wrap;
+  }
+  .talk-card-header h4 { font-size: .95rem; font-weight: 700; flex: 1; min-width: 180px; }
+  .talk-card-header .tag {
+    font-size: .68rem; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .tag-persona { background: #ede7f6; color: #5e35b1; }
+  .tag-capability { background: #e0f2f1; color: #00796b; }
+  .talk-card-body { padding: 18px 22px; }
+  .talk-card-body p { font-size: .85rem; margin-bottom: 10px; }
+  .talk-card-body .talk-label {
+    font-size: .7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--text-muted); margin-bottom: 4px; margin-top: 12px;
+  }
+  .talk-card-body .questions { font-style: italic; color: var(--text-muted); font-size: .83rem; }
+  .talk-card-body .questions li { margin-bottom: 6px; }
+
+  /* ─── PERSONA EXPAND ─── */
+  .persona-expand {
+    cursor: pointer; user-select: none;
+  }
+  .persona-expand:hover { background: rgba(0,191,179,.04); }
+  .persona-details {
+    display: none;
+    padding: 12px 14px;
+    background: #fafaf8;
+    font-size: .82rem;
+  }
+  .persona-details.open { display: table-cell; }
+  .persona-details ul { padding-left: 16px; }
+  .persona-details li { margin-bottom: 4px; color: var(--text-muted); font-style: italic; }
+  .expand-arrow { transition: transform .2s ease; display: inline-block; }
+  .expand-arrow.open { transform: rotate(90deg); }
+
+  /* ─── OPPORTUNITY LIST ─── */
+  .opp-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .opp-item:last-child { border-bottom: none; }
+  .opp-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--elastic-teal); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .72rem; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+  }
+  .opp-item strong { font-size: .88rem; display: block; margin-bottom: 2px; }
+  .opp-item span { font-size: .8rem; color: var(--text-muted); }
+
+  /* ─── BACK TO TOP ─── */
+  .back-top {
+    position: fixed; bottom: 24px; right: 24px;
+    width: 42px; height: 42px;
+    background: var(--bg-sidebar); color: #fff;
+    border: none; border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    opacity: 0; transform: translateY(10px);
+    transition: all .25s ease;
+    z-index: 80;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .back-top.visible { opacity: 1; transform: translateY(0); }
+  .back-top:hover { background: var(--elastic-teal); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .hamburger { display: flex; }
+    .overlay.open { display: block; }
+    .main { margin-left: 0; }
+    .main-inner { padding: 60px 18px 60px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  }
+
+  /* ─── SMALL UTILITY ─── */
+  .mb-0 { margin-bottom: 0; }
+  .mt-sm { margin-top: 12px; }
+  .text-sm { font-size: .82rem; }
+  .text-muted { color: var(--text-muted); }
+  .font-mono { font-family: var(--font-mono); }
+  .elastic-highlight {
+    background: rgba(0,191,179,.1);
+    border-left: 3px solid var(--elastic-teal);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin: 12px 0;
+    font-size: .85rem;
+  }
+  .reg-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: .72rem; font-weight: 600; margin-right: 4px;
+  }
+  .reg-nis2 { background: #fce4ec; color: #c62828; }
+  .reg-gdpr { background: #e8eaf6; color: #283593; }
+  .reg-euai { background: #fff3e0; color: #e65100; }
+</style>
+</head>
+<body>
+
+<!-- Hamburger -->
+<button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+  <span></span><span></span><span></span>
+</button>
+<div class="overlay" id="overlay"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <h1>Nuuday × <span>Elastic</span></h1>
+    <p>Executive Research Briefing</p>
+  </div>
+  <nav>
+    <a href="#overview" class="active"><span class="nav-icon">◆</span> Overview</a>
+    <div class="nav-divider"></div>
+    <a href="#strategy"><span class="nav-icon">🔭</span> Strategy <span class="nav-num">01</span></a>
+    <a href="#dawn"><span class="nav-icon">🌅</span> Dawn Transformation <span class="nav-num">02</span></a>
+    <a href="#ai-data"><span class="nav-icon">🧠</span> AI &amp; Data/Analytics <span class="nav-num">03</span></a>
+    <a href="#tech-stack"><span class="nav-icon">🏗</span> Tech Stack <span class="nav-num">04</span></a>
+    <a href="#security"><span class="nav-icon">🔐</span> Security &amp; Regulatory <span class="nav-num">05</span></a>
+    <a href="#personas"><span class="nav-icon">👥</span> Personas <span class="nav-num">06</span></a>
+    <a href="#opportunities"><span class="nav-icon">🎯</span> Elastic Opportunities <span class="nav-num">07</span></a>
+  </nav>
+  <div class="sidebar-footer">Prepared Feb 2026 · Internal Use</div>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+<div class="main-inner">
+
+<!-- ═══════════════════════════════════ OVERVIEW ═══════════════════════════════════ -->
+<section id="overview">
+  <div class="section-header">
+    <div class="section-icon" style="background:#e0f2f1;color:#00796b;">◆</div>
+    <h2>Overview</h2>
+  </div>
+  <p class="section-summary">
+    Nuuday A/S is Denmark's largest connectivity, communications and entertainment service provider — the customer-facing arm of TDC Group (TDC NET owns infrastructure). Operating 6 sub-brands across consumer and B2B, Nuuday serves <strong>5.9 M customer relations</strong> and <strong>1.8 M business customers</strong>. The company is executing one of Europe's most ambitious telco IT overhauls: replacing a 40-year-old Columbus mainframe with the cloud-native <em>Dawn</em> platform (Netcracker BSS/OSS + TCS hybrid cloud). As Nuuday enters the "harder next phase" — B2B/fixed-line migration, NIS2 compliance, and scaled AI — Elastic is positioned to provide critical observability, security analytics, search, and AI infrastructure.
+  </p>
+
+  <div class="kpi-grid">
+    <div class="kpi-tile">
+      <div class="kpi-value" style="color:var(--accent);">+7 pts</div>
+      <div class="kpi-label">NPS Improvement</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-value" style="color:var(--elastic-dark);">60%</div>
+      <div class="kpi-label">Faster Time-to-Market</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-value" style="color:var(--accent2);">−13%</div>
+      <div class="kpi-label">Incoming Calls (AI)</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-value" style="color:var(--accent4);">5.9M</div>
+      <div class="kpi-label">Customer Relations</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-value" style="color:var(--accent3);">1.8M</div>
+      <div class="kpi-label">Business Customers</div>
+    </div>
+    <div class="kpi-tile">
+      <div class="kpi-value" style="color:#2e7d32;">18 Qtrs</div>
+      <div class="kpi-label">Net Adds Growth</div>
+    </div>
+  </div>
+
+  <div class="meeting-focus">
+    <h3>📌 Meeting Focus</h3>
+    <p>
+      <strong>Tomorrow's meeting focus:</strong> Dawn transformation — the harder next phase (B2B/fixed-line), unified observability across hybrid stack, AI/GenAI infrastructure, NIS2 compliance (July 2025 deadline), and the 360° customer view. Position Elastic as the platform that de-risks transformation and accelerates value realization.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ STRATEGY ═══════════════════════════════════ -->
+<section id="strategy">
+  <div class="section-header">
+    <div class="section-icon" style="background:#e3f2fd;color:#1565c0;">🔭</div>
+    <h2>Strategy</h2>
+  </div>
+  <p class="section-summary">
+    CEO Christian Thrane's mandate: transform Nuuday from a legacy infrastructure-bound operator into a "lean, digital, best-in-class service provider" competing on customer experience. The strategy rests on IT modernization (Dawn/Netcracker/TCS), CX excellence (AI, digital self-service, NPS), and convergence & B2B growth.
+  </p>
+
+  <!-- Strategic North Star -->
+  <div class="card">
+    <h3>Strategic North Star</h3>
+    <p>Nuuday is the customer-facing arm of TDC Group (separated Jan 2022), purchasing wholesale network access from TDC NET while competing on service differentiation. The 5 stated strategic priorities:</p>
+    <ol style="padding-left:18px;margin-top:10px;font-size:.86rem;">
+      <li><strong>Digital Transformation &amp; IT Modernization</strong> — replace Columbus mainframe with cloud-native Dawn platform</li>
+      <li><strong>Customer Experience Excellence</strong> — best-in-class NPS, digital self-service adoption</li>
+      <li><strong>Operational Efficiency</strong> — reduce cost-to-serve via automation, AI, digitization</li>
+      <li><strong>Convergence &amp; Bundle Strategy</strong> — drive multi-product adoption (mobile + broadband + TV)</li>
+      <li><strong>B2B Growth</strong> — expand TDC Erhverv as Denmark's leading B2B connectivity provider</li>
+    </ol>
+  </div>
+
+  <!-- Business Pressures & KPIs -->
+  <div class="card">
+    <h3>Key Business Pressures &amp; KPIs</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pressure</th><th>Context</th><th>2024 Metric</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Churn &amp; Retention</strong></td><td>Saturated market (&gt;150% mobile penetration); competition from Telenor, Norlys, MVNOs</td><td>bNPS all-time high (+7 pts)</td></tr>
+          <tr><td><strong>ARPU Pressure</strong></td><td>Consumer downspin; 30-40% MVNO discounts; content cost inflation</td><td>DKK 13,451M service revenue (+0.8%)</td></tr>
+          <tr><td><strong>Time-to-Market</strong></td><td>Legacy Columbus slowed innovation</td><td>60% decrease via Dawn</td></tr>
+          <tr><td><strong>Digital Self-Service</strong></td><td>Cost-to-serve reduction imperative</td><td>Hiper: 98% new customers self-service</td></tr>
+          <tr><td><strong>Operational Costs</strong></td><td>Legacy maintenance + energy inflation</td><td>13% call reduction via AI chatbots</td></tr>
+          <tr><td><strong>B2B Growth</strong></td><td>Expand enterprise market share</td><td>1.8M business customers; Cisco Gold</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Elastic Outcomes -->
+  <div class="card">
+    <h3>Measurable Outcomes Elastic Can Influence</h3>
+    <ul>
+      <li>Faster time-to-insight — reduce analytics latency for Dawn's 60% time-to-market improvement target</li>
+      <li>Enhanced digital experience monitoring — real-time visibility into customer journeys across Dawn touchpoints</li>
+      <li>Proactive issue detection — predictive degradation detection to protect NPS gains &amp; call reduction goals</li>
+      <li>Unified observability — single-pane visibility across TCS cloud, Netcracker BSS/OSS, and legacy Columbus</li>
+      <li>Security &amp; compliance — centralized log analytics for ISO 27001 / GDPR / NIS2</li>
+      <li>B2B service assurance — Cisco Gold Provider-level service quality via enhanced APM</li>
+      <li>AI/ML data foundation — search infrastructure supporting Cognigy chatbots and GenAI initiatives</li>
+      <li>Operational resilience — comprehensive observability during Columbus decommissioning</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DAWN ═══════════════════════════════════ -->
+<section id="dawn">
+  <div class="section-header">
+    <div class="section-icon" style="background:#fff3e0;color:#e65100;">🌅</div>
+    <h2>Dawn Transformation <span class="priority-badge">Priority</span></h2>
+  </div>
+
+  <!-- Narrative -->
+  <div class="card">
+    <h3>Business Narrative</h3>
+    <p>Dawn is Nuuday's largest IT investment in company history — a comprehensive migration from the 1980s-era Columbus mainframe (the "dragon in the basement") to a modern, cloud-native BSS/OSS stack powered by Netcracker and hosted on TCS's hybrid cloud platform. The B2C mobile migration (YouSee) reached a critical milestone in Oct 2024. Now Nuuday enters the "harder next phase": B2B and fixed-line migrations with more complex systems and higher customer-impact risks.</p>
+  </div>
+
+  <!-- Phases -->
+  <div class="phase-list">
+    <div class="phase-pill">
+      <strong>Phase 1 — Migration Safety</strong>
+      <span>Data validation, parallel-system observability, cutover monitoring, rollback triggers</span>
+    </div>
+    <div class="phase-pill">
+      <strong>Phase 2 — Operational Excellence</strong>
+      <span>360° customer view, digital channel optimization, order-to-activate, billing assurance</span>
+    </div>
+    <div class="phase-pill">
+      <strong>Phase 3 — AI-Driven Personalization</strong>
+      <span>Real-time churn prediction, campaign analytics, network-BSS correlation, cloud optimization</span>
+    </div>
+  </div>
+
+  <!-- Architecture Diagram -->
+  <div class="arch-diagram">
+    <h4>Dawn Architecture — Where Elastic Fits</h4>
+    <div class="arch-layers">
+      <div class="arch-layer layer-channels">
+        <span class="layer-label">Layer 1 — Customer Channels (6 Sub-Brands)</span>
+        <div class="arch-box">YouSee</div>
+        <div class="arch-box">TDC</div>
+        <div class="arch-box">Hiper</div>
+        <div class="arch-box">Telmore</div>
+        <div class="arch-box">Erhverv</div>
+        <div class="arch-box">Easy</div>
+      </div>
+      <div class="arch-arrow">▼</div>
+      <div class="arch-layer layer-netcracker">
+        <span class="layer-label">Layer 2 — Netcracker Digital BSS/OSS</span>
+        <div class="arch-box">Customer Engagement &amp; CRM</div>
+        <div class="arch-box">AI &amp; Analytics</div>
+        <div class="arch-box">API Management</div>
+        <div class="arch-box">Order &amp; Revenue Mgmt</div>
+      </div>
+      <div class="arch-arrow">▼</div>
+      <div class="arch-layer layer-infra">
+        <span class="layer-label">Layer 3 — TCS Enterprise Cloud / Infrastructure</span>
+        <div class="arch-box">Private Cloud</div>
+        <div class="arch-box">Public Cloud (Azure)</div>
+        <div class="arch-box">IaaS &amp; Automation</div>
+        <div class="arch-box">TCS Cognix</div>
+      </div>
+      <div class="arch-arrow">▼</div>
+      <div class="arch-layer layer-legacy">
+        <span class="layer-label">Legacy — Columbus (Being Decommissioned)</span>
+        <div class="arch-box">Legacy BSS/OSS</div>
+        <div class="arch-box">Data Migration in Progress</div>
+      </div>
+      <div class="arch-arrow" style="font-size:.85rem;color:var(--elastic-teal);">▼ all telemetry flows into ▼</div>
+      <div class="elastic-overlay">
+        <span class="layer-label">Elastic Platform (Unified Layer)</span>
+        <span>Observability · Search · Security · AI/ML Analytics</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 10 Entry Points -->
+  <div class="card">
+    <h3>Top 10 Elastic Entry Points Tied to Dawn</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:36px;">#</th><th>Entry Point</th><th>Business Impact</th><th>Dawn Connection</th></tr></thead>
+        <tbody>
+          <tr><td><span class="priority-num high">1</span></td><td><strong>Unified Observability for Migration Cutover</strong></td><td>Prevent customer-impacting outages</td><td>Parallel system operation; rollback decisions</td></tr>
+          <tr><td><span class="priority-num high">2</span></td><td><strong>API Gateway Monitoring</strong></td><td>Microservices reliability &amp; fast error resolution</td><td>Netcracker API Management — massive telemetry</td></tr>
+          <tr><td><span class="priority-num high">3</span></td><td><strong>360° Customer Search for Agents</strong></td><td>Faster case resolution, NPS improvement</td><td>Unified customer view goal; agent productivity</td></tr>
+          <tr><td><span class="priority-num">4</span></td><td><strong>Digital Journey Analytics (e-SIM)</strong></td><td>Optimize conversion, reduce abandonment</td><td>2-min sign-up flow optimization</td></tr>
+          <tr><td><span class="priority-num">5</span></td><td><strong>Order-to-Activate Visibility</strong></td><td>Reduce fulfillment delays</td><td>Key Dawn benefit; operational efficiency</td></tr>
+          <tr><td><span class="priority-num">6</span></td><td><strong>Data Migration Validation &amp; Audit</strong></td><td>Billing accuracy, regulatory compliance</td><td>Columbus-to-Dawn data integrity</td></tr>
+          <tr><td><span class="priority-num">7</span></td><td><strong>Billing Anomaly Detection</strong></td><td>Prevent revenue leakage</td><td>Core BSS function; financial impact</td></tr>
+          <tr><td><span class="priority-num">8</span></td><td><strong>Real-Time Sentiment Analysis</strong></td><td>Proactive churn prevention</td><td>AI/analytics platform integration</td></tr>
+          <tr><td><span class="priority-num">9</span></td><td><strong>Hybrid Cloud Cost Optimization</strong></td><td>Optimize TCS cloud spend</td><td>Multi-million dollar TCS deal governance</td></tr>
+          <tr><td><span class="priority-num">10</span></td><td><strong>Network-BSS Correlation</strong></td><td>Faster incident resolution</td><td>Key OSS function; CX impact</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Churn & Agility Tables -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>How Dawn Reduces Churn</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Churn Driver</th><th>Dawn Solution</th></tr></thead>
+          <tbody>
+            <tr><td>Fragmented CX</td><td>Unified 360° view → NPS +7</td></tr>
+            <tr><td>Slow issue resolution</td><td>AI diagnostics, predictive detection</td></tr>
+            <tr><td>Manual process errors</td><td>Automated provisioning &amp; fulfillment</td></tr>
+            <tr><td>Poor digital experience</td><td>Next-gen channels; 2-min e-SIM sign-up</td></tr>
+            <tr><td>Lack of personalization</td><td>AI next-best-action recommendations</td></tr>
+            <tr><td>Service reliability</td><td>Cloud-native auto-scaling &amp; redundancy</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>How Dawn Increases Agility</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Challenge</th><th>Dawn Solution</th></tr></thead>
+          <tbody>
+            <tr><td>Monolithic systems</td><td>Microservices; independent deploys</td></tr>
+            <tr><td>Slow product launches</td><td>Flexible catalog → 60% faster TTM</td></tr>
+            <tr><td>Rigid infrastructure</td><td>Hybrid cloud; auto-scaling; IaC</td></tr>
+            <tr><td>Manual integrations</td><td>API platform; pre-built connectors</td></tr>
+            <tr><td>Siloed data</td><td>Unified data platform; real-time analytics</td></tr>
+            <tr><td>Complex change mgmt</td><td>DevOps, CI/CD pipelines</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ AI & DATA ═══════════════════════════════════ -->
+<section id="ai-data">
+  <div class="section-header">
+    <div class="section-icon" style="background:#f3e5f5;color:#7b1fa2;">🧠</div>
+    <h2>AI &amp; Data/Analytics</h2>
+  </div>
+  <p class="section-summary">
+    Nuuday has a formal Responsible AI Policy (human-centric, transparent, fair, secure, GDPR-compliant) and demonstrated AI maturity with Cognigy chatbots (13% call reduction), speech analytics, and digital sign-up optimization. The "new IT platform" initiative creates a window to embed Elastic as foundational AI infrastructure.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Responsible AI Policy</h3>
+      <p>Five core principles govern all AI: <strong>Human-Centric Use</strong> (humans in control), <strong>Transparency</strong> (clear AI disclosure), <strong>Fairness</strong> (bias auditing), <strong>Security</strong> (vulnerability management), and <strong>Data Privacy</strong> (GDPR + purpose limitation). This constrains black-box models and autonomous decisions but enables employee GenAI, chatbots, predictive analytics, and process automation.</p>
+    </div>
+    <div class="card">
+      <h3>Data Platform Maturity</h3>
+      <p>Central data platform: <em>developing</em>. Customer Data Platform: <em>partial</em>. Analytics tooling: <em>operational</em> (Cognigy, speech analytics). AI/ML infrastructure: <em>growing</em> (Netcracker AI module, CloudKey). Data governance: <em>established</em> (Responsible AI Policy, GDPR via CloudKey).</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Current AI Use Cases</h3>
+    <p><strong>In production:</strong> AI chatbots (Cognigy) — 13% call reduction; Speech analytics — call quality &amp; sentiment; Digital sign-up optimization; Easy brand full digital transformation (call center shutdown). <strong>Emerging/B2B:</strong> CloudKey — encrypted GDPR-compliant AI for B2B; Security Suite — AI-powered threat detection (TDC Erhverv).</p>
+  </div>
+
+  <div class="card">
+    <h3>Elastic-Relevant AI/Analytics Opportunities</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Use Case</th><th>Nuuday Context</th><th>Elastic Angle</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Unified Customer 360 Search</strong></td><td>Consolidate data across YouSee, TDC, Easy into searchable profile</td><td>Elasticsearch index + vector search; GenAI natural-language queries</td></tr>
+          <tr><td><strong>Intelligent Ticket Deflection</strong></td><td>Enhance Cognigy chatbot with deeper knowledge retrieval</td><td>Vector search for semantic classification; reduce calls further</td></tr>
+          <tr><td><strong>AI Observability (Netcracker)</strong></td><td>Monitor AI/ML models on Netcracker stack</td><td>Elastic Observability + APM for model performance &amp; drift</td></tr>
+          <tr><td><strong>Vector Search for Products</strong></td><td>Semantic search across catalog &amp; support articles</td><td>Hybrid search (keyword + semantic); personalized recommendations</td></tr>
+          <tr><td><strong>Security Analytics for AI</strong></td><td>Protect AI infrastructure; detect adversarial attacks</td><td>Elastic Security SIEM; anomaly detection on model inputs</td></tr>
+          <tr><td><strong>Speech Analytics Enhancement</strong></td><td>Semantic search across call transcripts</td><td>Vector search for topic clustering &amp; sentiment trends</td></tr>
+          <tr><td><strong>Churn Model Observability</strong></td><td>Monitor churn prediction models for drift &amp; fairness</td><td>Elastic Observability dashboards; bias detection alerts</td></tr>
+          <tr><td><strong>GDPR-Compliant AI Governance</strong></td><td>Data governance for AI training data with audit</td><td>Searchable audit logs; automated retention enforcement</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ TECH STACK ═══════════════════════════════════ -->
+<section id="tech-stack">
+  <div class="section-header">
+    <div class="section-icon" style="background:#e8f5e9;color:#2e7d32;">🏗</div>
+    <h2>Tech Stack</h2>
+  </div>
+  <p class="section-summary">
+    Nuuday's technology landscape is anchored by three pillars: Dawn (Netcracker BSS/OSS), TCS Enterprise Cloud (hybrid infrastructure), and the legacy Columbus system being decommissioned. Netcracker is hosted on Azure; TCS provides private+public hybrid cloud with IaaS.
+  </p>
+
+  <div class="card">
+    <h3>Core Stack Components</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Component</th><th>Provider</th><th>Function</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dawn / Digital BSS/OSS</strong></td><td>Netcracker (NEC)</td><td>Customer engagement, CRM, order mgmt, revenue mgmt, product catalog, AI &amp; analytics</td><td>Live for B2C mobile; B2C completion Q2 2025</td></tr>
+          <tr><td><strong>TCS Enterprise Cloud</strong></td><td>Tata Consultancy</td><td>Hybrid cloud IaaS, workload distribution, automation, TCS Cognix (digital workplace)</td><td>Signed Mar 2024; ~$100M+ contract</td></tr>
+          <tr><td><strong>Legacy Columbus</strong></td><td>In-house (1980s)</td><td>Original BSS/OSS mainframe — being decommissioned</td><td>Declining; data migration in progress</td></tr>
+          <tr><td><strong>AI Chatbots</strong></td><td>Cognigy</td><td>Customer service automation across digital touchpoints</td><td>Production; 13% call reduction</td></tr>
+          <tr><td><strong>Cloud Hosting</strong></td><td>Microsoft Azure</td><td>Netcracker stack hosting; Azure-native data centers in Nordics</td><td>Active</td></tr>
+          <tr><td><strong>CloudKey</strong></td><td>Nuuday/TDC</td><td>Encrypted, GDPR-compliant cloud &amp; AI technology for B2B</td><td>B2B offering</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Where Elastic Fits — Integration Points</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Point</th><th>Location</th><th>Elastic Solution</th><th>Business Value</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--elastic-teal);font-weight:700;">1</td><td>Digital Channels (6 brands)</td><td>APM, Real User Monitoring, Search</td><td>Customer journey visibility; search-powered self-service</td></tr>
+          <tr><td style="color:var(--elastic-teal);font-weight:700;">2</td><td>Netcracker API/Integration</td><td>APM, Logs, Distributed Tracing</td><td>API performance optimization; integration failure detection</td></tr>
+          <tr><td style="color:var(--elastic-teal);font-weight:700;">3</td><td>Netcracker Microservices</td><td>APM, Infrastructure Monitoring, Logs</td><td>Microservice health; container observability; faster MTTR</td></tr>
+          <tr><td style="color:var(--elastic-teal);font-weight:700;">4</td><td>AI &amp; Analytics Layer</td><td>Search, Kibana, ML</td><td>Unified data exploration; anomaly detection</td></tr>
+          <tr><td style="color:var(--elastic-teal);font-weight:700;">5</td><td>TCS Infrastructure</td><td>Infrastructure Monitoring, Logs, Security</td><td>Cloud resource optimization; security event correlation</td></tr>
+          <tr><td style="color:var(--elastic-teal);font-weight:700;">6</td><td>Legacy Columbus</td><td>Logs, Metrics</td><td>Migration tracking; legacy-to-new reconciliation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ SECURITY ═══════════════════════════════════ -->
+<section id="security">
+  <div class="section-header">
+    <div class="section-icon" style="background:#fce4ec;color:#c62828;">🔐</div>
+    <h2>Security &amp; Regulatory</h2>
+  </div>
+  <p class="section-summary">
+    Nuuday is a critical infrastructure provider automatically classified under NIS2. With NIS2 taking effect July 2025, EU AI Act requirements for AI governance, and strict GDPR/ePrivacy telecom obligations, there is board-level urgency for enhanced security monitoring and compliance tooling.
+  </p>
+
+  <div class="card">
+    <h3>Nuuday Security Posture</h3>
+    <p>Responsible AI Policy mandates cybersecurity standards, regular assessments, continuous monitoring, and rigorous testing for all AI systems. Security products: <strong>TDC Erhverv Security Suite</strong> (B2B cyber protection), <strong>CloudKey</strong> (encrypted, GDPR-compliant cloud/AI), and critical infrastructure classification under NIS2.</p>
+  </div>
+
+  <div class="card">
+    <h3>Regulatory Landscape → Observability/Security Implications</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Regulation</th><th>Key Details</th><th>Implication for Observability &amp; Security Tooling</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="reg-tag reg-nis2">NIS2</span></td>
+            <td>Effective July 1, 2025; 24h→72h→30d reporting; sanctions up to €10M / 2% turnover; board liability</td>
+            <td>Real-time alerting, automated case management, evidence gathering for CFCS portal; executive dashboards for compliance posture</td>
+          </tr>
+          <tr>
+            <td><span class="reg-tag reg-euai">EU AI Act</span></td>
+            <td>Risk classification for AI; governance documentation, human oversight, audit trails</td>
+            <td>AI/ML log ingestion, model lineage tracking, inference event indexing; decision reconstruction with full context</td>
+          </tr>
+          <tr>
+            <td><span class="reg-tag reg-gdpr">GDPR</span></td>
+            <td>Article 32 (security of processing); 72h breach notification; data retention limits</td>
+            <td>Immutable logging, data access monitoring, anomalous query detection; DLP integration for personal data</td>
+          </tr>
+          <tr>
+            <td><span class="reg-tag reg-gdpr">ePrivacy</span></td>
+            <td>Confidentiality of electronic communications; traffic data retention limits</td>
+            <td>Monitor unauthorized access to customer communications; audit trails for all data processing</td>
+          </tr>
+          <tr>
+            <td><span class="reg-tag reg-nis2">NIS2 Scope</span></td>
+            <td>Expanded to ~6,000 entities; third-party/supply chain visibility required</td>
+            <td>Third-party security assessment ingestion; API traffic monitoring across extended ecosystem</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Security/Compliance Angles for Elastic</h3>
+    <ul>
+      <li><strong>NIS2 24h reporting</strong> — Elastic Security SIEM for real-time detection + automated incident case management</li>
+      <li><strong>Board accountability</strong> — Executive dashboards with compliance scorecards and risk metrics</li>
+      <li><strong>EU AI Act documentation</strong> — AI model log ingestion, model lineage tracking, explainability logging</li>
+      <li><strong>GDPR audit trails</strong> — Immutable logging with data access monitoring across all systems</li>
+      <li><strong>Third-party risk</strong> — Unified visibility across TCS, Netcracker, and extended vendor ecosystem</li>
+      <li><strong>Sanctions avoidance</strong> — Risk scoring and automated compliance gap analysis (€10M/2% exposure)</li>
+      <li><strong>Cross-border coordination</strong> — Data residency controls and multi-region search for TDC Group</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ PERSONAS ═══════════════════════════════════ -->
+<section id="personas">
+  <div class="section-header">
+    <div class="section-icon" style="background:#ede7f6;color:#5e35b1;">👥</div>
+    <h2>Personas</h2>
+  </div>
+  <p class="section-summary">
+    New CTIO from Vodafone leading the "harder next phase." Consensus-driven buying model — engage multiple personas simultaneously. Most likely champions: Head of IT Operations or Head of Data &amp; Analytics. Position Elastic as complementary to TCS and Netcracker investments.
+  </p>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="table-wrap" style="margin:0;">
+      <table id="persona-table">
+        <thead>
+          <tr>
+            <th style="width:28px;"></th>
+            <th>Persona</th>
+            <th>Primary Goals</th>
+            <th>Key Pains</th>
+            <th>How Dawn Shows Up</th>
+            <th>Elastic Hooks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="persona-expand" onclick="togglePersona(0)">
+            <td><span class="expand-arrow" id="arrow-0">▸</span></td>
+            <td><strong>CTIO / EVP Technology</strong></td>
+            <td>Deliver Dawn on time/budget; consolidate 6 brand stacks; enable AI</td>
+            <td>Integration complexity; tech debt; vendor management; skills gaps</td>
+            <td>Signature program defining tenure; every tech decision flows through Dawn</td>
+            <td>Unified observability; AIOps; platform architecture</td>
+          </tr>
+          <tr><td colspan="6" class="persona-details" id="details-0">
+            <ul>
+              <li>"How are you ensuring end-to-end visibility across Netcracker and TCS during this harder phase?"</li>
+              <li>"What challenges with unified observability across legacy and cloud-native environments?"</li>
+              <li>"With your Vodafone background, how are you approaching AIOps at Nuuday's scale?"</li>
+            </ul>
+          </td></tr>
+
+          <tr class="persona-expand" onclick="togglePersona(1)">
+            <td><span class="expand-arrow" id="arrow-1">▸</span></td>
+            <td><strong>Head of IT Ops / Cloud</strong></td>
+            <td>99.999% availability; cloud migration; reduce MTTR; cost optimization</td>
+            <td>Siloed monitoring; alert fatigue; stack correlation difficulty</td>
+            <td>Opportunity + risk: modern infra but transition complexity</td>
+            <td>Infrastructure monitoring; log analytics; single-pane view</td>
+          </tr>
+          <tr><td colspan="6" class="persona-details" id="details-1">
+            <ul>
+              <li>"How are you maintaining unified visibility across hybrid infrastructure during migration?"</li>
+              <li>"When incidents span TCS, Netcracker, and your own ops, how fast can you find root cause?"</li>
+              <li>"What would a single searchable view of all logs/metrics/traces mean for your team?"</li>
+            </ul>
+          </td></tr>
+
+          <tr class="persona-expand" onclick="togglePersona(2)">
+            <td><span class="expand-arrow" id="arrow-2">▸</span></td>
+            <td><strong>Head of BSS/OSS / Digital</strong></td>
+            <td>Netcracker success; seamless CX across brands; faster TTM</td>
+            <td>Integration complexity; data quality; performance visibility gaps</td>
+            <td>Modernizing the customer experience layer; Netcracker must work flawlessly</td>
+            <td>APM; customer journey analytics; search-powered insights</td>
+          </tr>
+          <tr><td colspan="6" class="persona-details" id="details-2">
+            <ul>
+              <li>"How are you monitoring app performance during Netcracker rollout across 6 brands?"</li>
+              <li>"Where are your biggest blind spots in customer journey visibility?"</li>
+              <li>"How are you leveraging search/analytics for customer operational decisions?"</li>
+            </ul>
+          </td></tr>
+
+          <tr class="persona-expand" onclick="togglePersona(3)">
+            <td><span class="expand-arrow" id="arrow-3">▸</span></td>
+            <td><strong>CISO / Head of Security</strong></td>
+            <td>Data protection; GDPR/NIS2 compliance; real-time threat detection</td>
+            <td>Expanding attack surface; legacy SIEM limits; alert overload</td>
+            <td>Mainframe→cloud migration expands attack surface dramatically</td>
+            <td>SIEM; threat detection; compliance reporting</td>
+          </tr>
+          <tr><td colspan="6" class="persona-details" id="details-3">
+            <ul>
+              <li>"How are you adapting security monitoring for hybrid legacy + cloud environments?"</li>
+              <li>"How do you centralize security logs for NIS2 audit and compliance reporting?"</li>
+              <li>"What would faster cross-environment threat detection mean during transformation?"</li>
+            </ul>
+          </td></tr>
+
+          <tr class="persona-expand" onclick="togglePersona(4)">
+            <td><span class="expand-arrow" id="arrow-4">▸</span></td>
+            <td><strong>Head of Data &amp; AI</strong></td>
+            <td>Unified data platform; AI/ML enablement; data democratization</td>
+            <td>Data silos; slow time-to-insight; limited AI/ML tooling</td>
+            <td>Dawn = data transformation opportunity; unified data for AI</td>
+            <td>Vector search; model observability; self-service analytics</td>
+          </tr>
+          <tr><td colspan="6" class="persona-details" id="details-4">
+            <ul>
+              <li>"How are you approaching unified search across 6 sub-brands' data?"</li>
+              <li>"What infrastructure challenges for vector search and model observability at scale?"</li>
+              <li>"What would self-service customer data exploration mean for business users?"</li>
+            </ul>
+          </td></tr>
+
+          <tr class="persona-expand" onclick="togglePersona(5)">
+            <td><span class="expand-arrow" id="arrow-5">▸</span></td>
+            <td><strong>CCO / Head of CX</strong></td>
+            <td>Revenue growth; retention; digital CX; personalization at scale</td>
+            <td>Inconsistent CX across brands; limited behavior visibility</td>
+            <td>Dawn = enabler of competitive differentiation via better CX</td>
+            <td>Digital experience monitoring; personalization data</td>
+          </tr>
+          <tr><td colspan="6" class="persona-details" id="details-5">
+            <ul>
+              <li>"How are you measuring CX impact across 6 sub-brands post-Dawn?"</li>
+              <li>"What would real-time insights into customer behavior and journey friction mean?"</li>
+              <li>"How are you leveraging transformation data for personalized offers?"</li>
+            </ul>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="elastic-highlight" style="margin-top:20px;">
+    <strong>Buying center tip:</strong> Economic buyer is CTIO (+ CFO for large investments). Champions most likely from IT Ops or Data &amp; Analytics. Multi-thread all personas; frame Elastic as complementary to TCS and Netcracker. Reference Vodafone Elastic deployment with new CTIO.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ OPPORTUNITIES ═══════════════════════════════════ -->
+<section id="opportunities">
+  <div class="section-header">
+    <div class="section-icon" style="background:#e0f7fa;color:#00838f;">🎯</div>
+    <h2>Elastic Opportunities</h2>
+  </div>
+  <p class="section-summary">
+    Ten opportunity themes mapped to Dawn priorities, plus four meeting-focused talk tracks with discovery questions and conversation openers.
+  </p>
+
+  <div class="card">
+    <h3>Elastic Can Help Nuuday To…</h3>
+    <div class="opp-item"><div class="opp-num">1</div><div><strong>Achieve Unified Observability Across the Hybrid Dawn Stack</strong><br><span>Single pane of glass for legacy Columbus + Netcracker + TCS cloud during the harder migration phase</span></div></div>
+    <div class="opp-item"><div class="opp-num">2</div><div><strong>Accelerate Root Cause Analysis During Transformation Incidents</strong><br><span>Unified search &amp; correlation across logs/metrics/traces to reduce MTTR in complex B2B migrations</span></div></div>
+    <div class="opp-item"><div class="opp-num">3</div><div><strong>Establish AI-Powered AIOps for Proactive Operations</strong><br><span>ML anomaly detection extending Nuuday's AI maturity to infrastructure &amp; application operations</span></div></div>
+    <div class="opp-item"><div class="opp-num">4</div><div><strong>Enable a True 360° Customer View with Unified Search</strong><br><span>Enterprise Search unifying call transcripts, chat, tickets, network events, billing across all touchpoints</span></div></div>
+    <div class="opp-item"><div class="opp-num">5</div><div><strong>Build a Vector Database Foundation for Next-Gen AI</strong><br><span>Native vector search &amp; RAG for semantic search, AI assistants, knowledge bases — GDPR/EU AI Act compliant</span></div></div>
+    <div class="opp-item"><div class="opp-num">6</div><div><strong>Strengthen Security Posture for NIS2 Compliance</strong><br><span>Modern SIEM with real-time threat detection, pre-built rules, and AI-powered analytics for July 2025 deadline</span></div></div>
+    <div class="opp-item"><div class="opp-num">7</div><div><strong>Monitor AI Application Performance and Behavior</strong><br><span>AI observability for chatbots, speech analytics, and prediction models — performance, latency, drift tracking</span></div></div>
+    <div class="opp-item"><div class="opp-num">8</div><div><strong>Optimize Cloud Costs and Resource Utilization</strong><br><span>Infrastructure monitoring &amp; cost analytics for data-driven TCS hybrid cloud workload placement</span></div></div>
+    <div class="opp-item"><div class="opp-num">9</div><div><strong>Enable Self-Service Analytics for Business Teams</strong><br><span>Kibana dashboards extending 60% TTM agility gains to product, marketing, and CX teams</span></div></div>
+    <div class="opp-item"><div class="opp-num">10</div><div><strong>Create a Searchable Knowledge Base for Ops &amp; Support</strong><br><span>Enterprise Search powering internal knowledge bases — faster resolution, fewer escalations</span></div></div>
+  </div>
+
+  <!-- Talk Tracks -->
+  <h3 style="font-family:var(--font-display);font-size:1.15rem;margin:28px 0 16px;">Talk Tracks for the Meeting</h3>
+
+  <div class="talk-card">
+    <div class="talk-card-header">
+      <h4>Talk Track 1 — Unified Observability for the "Harder Next Phase"</h4>
+      <span class="tag tag-persona">CTIO / IT Ops</span>
+      <span class="tag tag-capability">Observability</span>
+    </div>
+    <div class="talk-card-body">
+      <p class="talk-label">Context</p>
+      <p>B2C mobile migration delivered great results. Now the harder B2B/fixed-line phase begins — more complex systems, higher customer-impact risk, continued hybrid operations with both Columbus and Dawn running in parallel.</p>
+      <p class="talk-label">Hypothesis of Pain</p>
+      <p>Maintaining visibility across legacy and new cloud-native stacks becomes exponentially harder. Siloed monitoring creates blind spots and slow incident response during critical migration windows.</p>
+      <p class="talk-label">How Elastic Maps</p>
+      <p>Elastic Observability provides unified visibility — logs, metrics, traces, APM — in a single searchable platform. Correlates data across legacy and cloud-native systems. APM auto-discovers service dependencies in microservices.</p>
+      <p class="talk-label">Suggested Questions</p>
+      <ol class="questions">
+        <li>"When you have an incident spanning TCS cloud, Netcracker apps, and legacy systems, how quickly can your teams correlate events across these boundaries today?"</li>
+        <li>"With NIS2 approaching in July, how confident are you in detecting and investigating security events across this hybrid environment?"</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="talk-card">
+    <div class="talk-card-header">
+      <h4>Talk Track 2 — AI Infrastructure for the Responsible AI Future</h4>
+      <span class="tag tag-persona">Data &amp; AI / CTIO</span>
+      <span class="tag tag-capability">Search + AI</span>
+    </div>
+    <div class="talk-card-body">
+      <p class="talk-label">Context</p>
+      <p>Demonstrated AI maturity: Cognigy chatbots, responsible AI policy, 13% call reduction. Exploring GenAI with EU AI Act compliance positioning.</p>
+      <p class="talk-label">Hypothesis of Pain</p>
+      <p>Scaling AI requires infrastructure for semantic search, RAG, and AI assistants — while maintaining GDPR compliance and EU AI Act alignment. Separate vector databases create data movement risks.</p>
+      <p class="talk-label">How Elastic Maps</p>
+      <p>Native vector database + semantic search in the same observability platform. RAG enables AI assistants grounded in real data — customer records, network events, tickets — within governance framework. No separate vector DB needed.</p>
+      <p class="talk-label">Suggested Questions</p>
+      <ol class="questions">
+        <li>"For your Cognigy chatbots, how do you ensure they have access to the most current, relevant context like real-time customer data?"</li>
+        <li>"With your responsible AI policy, how are you approaching making AI decisions explainable and auditable?"</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="talk-card">
+    <div class="talk-card-header">
+      <h4>Talk Track 3 — Security Analytics for NIS2 Compliance</h4>
+      <span class="tag tag-persona">CISO / CTIO</span>
+      <span class="tag tag-capability">Security SIEM</span>
+    </div>
+    <div class="talk-card-body">
+      <p class="talk-label">Context</p>
+      <p>Critical infrastructure provider serving 4.1M households + 1.8M businesses. NIS2 effective July 2025. Dawn migration = moving from controlled mainframe to distributed cloud-native with thousands of APIs.</p>
+      <p class="talk-label">Hypothesis of Pain</p>
+      <p>NIS2 requires enhanced threat detection, incident response, and monitoring. Transition period creates expanded attack surface across legacy + cloud + hybrid integrations + third-party connections. Traditional SIEM may struggle with volume.</p>
+      <p class="talk-label">How Elastic Maps</p>
+      <p>Modern, open SIEM scaling to massive cloud-native data volumes while supporting legacy logs. Pre-built detection rules, AI-powered alert prioritization. Unified platform with Observability for security + performance visibility together.</p>
+      <p class="talk-label">Suggested Questions</p>
+      <ol class="questions">
+        <li>"How confident are you in detecting threats that move laterally between legacy systems and the new cloud environment?"</li>
+        <li>"For NIS2, how are you planning to correlate security events across TCS, Netcracker, and your own operations?"</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="talk-card">
+    <div class="talk-card-header">
+      <h4>Talk Track 4 — The 360° Customer View — Beyond CRM</h4>
+      <span class="tag tag-persona">CCO / CX / BSS</span>
+      <span class="tag tag-capability">Enterprise Search</span>
+    </div>
+    <div class="talk-card-body">
+      <p class="talk-label">Context</p>
+      <p>7-point NPS increase via Dawn's unified customer view. Netcracker CRM + 2-minute e-SIM sign-up. But 6 sub-brands and multiple channels mean comprehensive unification of real-time + unstructured data remains challenging.</p>
+      <p class="talk-label">Hypothesis of Pain</p>
+      <p>CRM consolidates records, but gaps in unifying call transcripts, chat logs, tickets, network events, and digital behavior. Remaining calls (after 13% chatbot deflection) are more complex — agents need better, faster context.</p>
+      <p class="talk-label">How Elastic Maps</p>
+      <p>Enterprise Search creates a unified, searchable layer across all customer data sources. Agents get instant, relevant answers. Real User Monitoring tracks actual digital journeys — shows where customers struggle before they call.</p>
+      <p class="talk-label">Suggested Questions</p>
+      <ol class="questions">
+        <li>"You've reduced calls by 13% with chatbots — the remaining calls are more complex. How are you equipping agents with better information and faster access?"</li>
+        <li>"With 6 sub-brands, how confident are you that a customer moving between brands has a consistent, fully-visible experience?"</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Value Summary -->
+  <div class="card" style="background:linear-gradient(135deg,#1a1a2e,#2d2d52);color:#fff;border:none;">
+    <h3 style="color:var(--elastic-teal);">Elastic Value Proposition Summary</h3>
+    <div class="table-wrap">
+      <table style="color:#fff;">
+        <thead><tr><th style="background:rgba(255,255,255,.08);color:#fff;border-bottom-color:rgba(255,255,255,.12);">Nuuday Priority</th><th style="background:rgba(255,255,255,.08);color:#fff;border-bottom-color:rgba(255,255,255,.12);">Elastic Capability</th><th style="background:rgba(255,255,255,.08);color:#fff;border-bottom-color:rgba(255,255,255,.12);">Key Benefit</th></tr></thead>
+        <tbody>
+          <tr><td style="border-color:rgba(255,255,255,.08);">Dawn transformation success</td><td style="border-color:rgba(255,255,255,.08);">Unified Observability</td><td style="border-color:rgba(255,255,255,.08);">Visibility across hybrid legacy/cloud stack</td></tr>
+          <tr><td style="border-color:rgba(255,255,255,.08);">NIS2 compliance (July 2025)</td><td style="border-color:rgba(255,255,255,.08);">Elastic Security (SIEM)</td><td style="border-color:rgba(255,255,255,.08);">Modern threat detection, compliance reporting</td></tr>
+          <tr><td style="border-color:rgba(255,255,255,.08);">AI/GenAI initiatives</td><td style="border-color:rgba(255,255,255,.08);">Vector Search + RAG</td><td style="border-color:rgba(255,255,255,.08);">Compliant AI infrastructure, knowledge bases</td></tr>
+          <tr><td style="border-color:rgba(255,255,255,.08);">360° customer view</td><td style="border-color:rgba(255,255,255,.08);">Enterprise Search</td><td style="border-color:rgba(255,255,255,.08);">Unified customer context across all channels</td></tr>
+          <tr><td style="border-color:rgba(255,255,255,.08);">Churn reduction</td><td style="border-color:rgba(255,255,255,.08);">APM + UX Monitoring</td><td style="border-color:rgba(255,255,255,.08);">Proactive issue detection, faster resolution</td></tr>
+          <tr><td style="border-color:rgba(255,255,255,.08);">Operational efficiency</td><td style="border-color:rgba(255,255,255,.08);">AIOps + ML</td><td style="border-color:rgba(255,255,255,.08);">Predictive operations, reduced MTTR</td></tr>
+          <tr><td style="border-color:rgba(255,255,255,.08);">Cloud cost optimization</td><td style="border-color:rgba(255,255,255,.08);">Infrastructure Monitoring</td><td style="border-color:rgba(255,255,255,.08);">Data-driven workload placement</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</div><!-- /main-inner -->
+</div><!-- /main -->
+
+<!-- Back to top -->
+<button class="back-top" id="backTop" title="Back to top">↑</button>
+
+<script>
+// ─── Sidebar navigation active state ───
+const navLinks = document.querySelectorAll('.sidebar nav a');
+const sections = document.querySelectorAll('section');
+
+function updateActiveNav() {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}
+window.addEventListener('scroll', updateActiveNav);
+
+// Close sidebar on mobile after click
+navLinks.forEach(a => {
+  a.addEventListener('click', () => {
+    if (window.innerWidth <= 860) {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+      document.getElementById('hamburger').classList.remove('open');
+    }
+  });
+});
+
+// ─── Hamburger ───
+const hamburger = document.getElementById('hamburger');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+hamburger.addEventListener('click', () => {
+  const isOpen = sidebar.classList.toggle('open');
+  overlay.classList.toggle('open', isOpen);
+  hamburger.classList.toggle('open', isOpen);
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  hamburger.classList.remove('open');
+});
+
+// ─── Back to top ───
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  backTop.classList.toggle('visible', window.scrollY > 400);
+});
+backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ─── Persona expand/collapse ───
+function togglePersona(idx) {
+  const details = document.getElementById('details-' + idx);
+  const arrow = document.getElementById('arrow-' + idx);
+  const isOpen = details.classList.toggle('open');
+  arrow.classList.toggle('open', isOpen);
+  if (isOpen) {
+    details.style.display = 'table-cell';
+  } else {
+    details.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
